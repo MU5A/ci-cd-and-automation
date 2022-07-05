@@ -38,6 +38,12 @@ jobs:
           name: Configure Server
           command: |
             ansible-playbook -i inventory.txt main.yml
+            
+
+workflows:
+  myWorkflow:
+    jobs:
+      - config_infra
 
 
 
