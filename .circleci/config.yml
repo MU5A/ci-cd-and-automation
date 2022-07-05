@@ -1,7 +1,7 @@
 version: 2.1
-# Use a package of configuration called an orb.
 orbs:
-  create_infrastructure:
+jobs:
+  create_infra:
       docker:
         - image: amazon/aws-cli
       steps: 
@@ -17,4 +17,4 @@ orbs:
 workflows:
   myWorkflow:
     jobs:
-      - create_infrastructure
+      - create_infra
