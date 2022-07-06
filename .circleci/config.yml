@@ -21,23 +21,36 @@
 
 version: 2.1
 
-orbs:
 jobs:
-  smoke_test:
+  create_and_deploy_front_end:
     docker:
-      - image: alpine:latest
+      - image: amazon/aws-cli
     steps:
-      - run: apk add --update curl
+      - checkout
       - run:
-          name: smoke test
+          name: Execute bucket.yml - Create Cloudformation Stack
           command: |
-            URL="https://blog.udacity.com/"
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
+            aws cloudformation deploy \
+            --template-file bucket.yml \
+            --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:7} \
+            --parameter-overrides MyBucketName="mybucket-${CIRCLE_WORKFLOW_ID:0:7}"
+ # Uncomment the step below if yoou wish to upload all contents of the current directory to the S3 bucket
+      - run: aws s3 sync . s3://mybucket-${CIRCLE_WORKFLOW_ID:0:7} --delete
+##  smoke_test:
+##    docker:
+##      - image: alpine:latest
+##    steps:
+ ##     - run: apk add --update curl
+  ##    - run:
+   ##       name: smoke test
+    ##      command: |
+     ##       URL="https://blog.udacity.com/"
+      ##      if curl -s --head ${URL} 
+       ##     then
+        #3      return 0
+        ##    else
+      ##        return 1
+        ##    fi
 
   #config_infra:
    # docker:
@@ -57,7 +70,7 @@ jobs:
 workflows:
   myWorkflow:
     jobs:
-      - smoke_test
+      - create_and_deploy_front_end
 
 
 
